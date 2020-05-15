@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphics</title>
+</head>
+
+<body>
+    <canvas id="myCanvas"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js" integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js" charset="utf-8"></script>
+    <script>
+        const socket = io();
+        var ctx = document.getElementById('myCanvas').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // texto que esta abajo
+                datasets: [{
+                    label: "v1",
+                    backgroundColor: 'rgba(148,159,177,0.2)',
+                    borderColor: 'rgba(148,159,177,1)',
+                    pointBackgroundColor: 'rgba(148,159,177,1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+                    data: []
+
+                }, {
+                    label: "v2",
+                    backgroundColor: 'rgba(77,83,96,0.2)',
+                    borderColor: 'rgba(77,83,96,1)',
+                    pointBackgroundColor: 'rgba(77,83,96,1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(77,83,96,1)',
+                    data: []
+                }, {
+                    label: "v3",
+                    backgroundColor: 'rgba(255,0,0,0.3)',
+                    borderColor: 'red',
+                    pointBackgroundColor: 'rgba(148,159,177,1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+                    data: []
+                }, {
+                    label: "v4",
+                    backgroundColor: 'rgba(148,159,177,0.2)',
+                    borderColor: 'rgba(77,83,96,1)',
+                    pointBackgroundColor: 'rgba(148,159,177,1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+                    data: []
+                }, {
+                    label: "v5",
+                    backgroundColor: 'rgba(77,83,96,0.2)',
+                    borderColor: 'rgba(77,83,96,1)',
+                    pointBackgroundColor: 'rgba(77,83,96,1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(77,83,96,1)',
+                    data: []
+                }]
+            },
+            options: {}
+        });
+
+        let counter = 0;
+        const v1 = [];
+        const v2 = [];
+        const v3 = [];
+        const v4 = [];
+        const v5 = [];
+        socket.on('arduino:data', dataserial => {
+            if (dataserial !== undefined) {
+                var cont = 0;
+                var y = JSON.stringify(dataserial);
+                var z = JSON.parse(y);
+                var d = z.value.split('\r\n');
+                var date = new Date();
+                haveNewData = false;
+                if (cont = 0) {
+                    if (d[0] != undefined && !isNaN(d[0])) {
+                        myChart.data.datasets[0].data.push(parseInt(d[0]));
+                        haveNewData = true;
+                    }
+                    cont++;
+                }
+                if (cont = 1) {
+                    if (d[1] != undefined && !isNaN(d[1])) {
+                        myChart.data.datasets[1].data.push(parseInt(d[1]));
+                        haveNewData = true;
+                    }
+                    cont++;
+                }
+                if (cont = 2) {
+                    if (d[2] != undefined && !isNaN(d[2])) {
+                        myChart.data.datasets[2].data.push(parseInt(d[2]));
+                        haveNewData = true;
+                    }
+                    cont++;
+                }
+                if (cont = 3) {
+                    if (d[3] != undefined && !isNaN(d[3])) {
+                        myChart.data.datasets[3].data.push(parseInt(d[3]));
+                        haveNewData = true;
+                    }
+                    cont++;
+                }
+                if (cont = 4) {
+                    if (d[4] != undefined && !isNaN(d[4])) {
+                        myChart.data.datasets[4].data.push(parseInt(d[4]));
+                        haveNewData = true;
+                    }
+                    cont = 0;
+                }
+            }
+            if (haveNewData) {
+                myChart.data.labels.push(date.getDay() + '-' + date.getHours() + ':' + date.getSeconds());
+            }
+            myChart.update();
+        });
+    </script>
+</body>
+
+</html>
